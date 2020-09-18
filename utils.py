@@ -7,6 +7,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from torchvision import transforms
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, plot_confusion_matrix
 
 def get_stats(dataset):
 
@@ -51,6 +52,7 @@ def plot_metrics(metric_list, plot_type="Loss"):
     ax.set_title(f'Variation of {plot_type.lower()} with epochs', fontsize=14)
     ax.set_ylabel(plot_type, fontsize=10)
     ax.set_xlabel('Number of Epochs', fontsize=10)
+    ax.legend()
     fig.tight_layout()
 
 def plot_incorrect_images(img_list, class_idx, cmap=None, plot_size=(15, 15)):
@@ -135,6 +137,8 @@ def show_batch(dataloader):
         ax.imshow(single_img, cmap=cmap)
         ax.set_title(title)
     fig.tight_layout()
+
+
 
 
 

@@ -1,6 +1,6 @@
 import torch
 
-DEBUG = False
+DEBUG = True
 BATCH_SIZE = 64
 EPOCHS = 50
 SEED = 42

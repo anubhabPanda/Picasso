@@ -3,13 +3,12 @@ from tqdm import tqdm
 import torch
 import numpy as np
 
-def train(model, dataloader, optimizer, loss_fn, device):
+def train(model, dataloader, optimizer, loss_fn, device, train_losses, train_acc):
     model.train()
     pbar = tqdm(dataloader, total=len(dataloader))
-    train_losses = []
-    train_acc = []
     correct = 0
     processed = 0
+    train_epoch_loss = 0
     for batch_idx, (data, target) in enumerate(pbar):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
@@ -20,13 +19,13 @@ def train(model, dataloader, optimizer, loss_fn, device):
         pred = y_pred.argmax(dim=1, keepdims=True)
         correct+= pred.eq(target.view_as(pred)).sum().item()
         processed += len(data)
-
+        train_epoch_loss+=loss.item()
         pbar.set_description(
             desc=f'Loss={loss.item():0.2f} Batch_ID={batch_idx} Accuracy={(100 * correct / processed):.2f}'
         )
 
-        train_losses.append(loss)
-        train_acc.append(100.*correct/processed)
+    train_losses.append(train_epoch_loss/len(dataloader.dataset))
+    train_acc.append(100.*correct/processed)
 
         # return model, train_losses, train_acc
 
