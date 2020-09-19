@@ -1,8 +1,8 @@
 import torch
 
-DEBUG = True
-BATCH_SIZE = 64
-EPOCHS = 50
+DEBUG = False
+BATCH_SIZE = 32
+EPOCHS = 20
 SEED = 42
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 DATA_DOWNLOAD = True

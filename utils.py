@@ -38,6 +38,9 @@ def get_model_summary(model, input_size):
 def cross_entropy_loss_fn():
     return nn.CrossEntropyLoss()
 
+def nll_loss():
+    return nn.NLLLoss()
+
 def sgd_optimizer(model, lr=0.01, momentum=0.9, l2_factor=0):
     return optim.SGD(model.parameters(), lr=lr, momentum=momentum, weight_decay=l2_factor)
 
