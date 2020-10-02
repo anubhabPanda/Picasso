@@ -1,4 +1,5 @@
 import torch
+import os
 
 def save_model(model, file_name):
     model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model', file_name)
