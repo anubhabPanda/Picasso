@@ -92,7 +92,7 @@ class GradCAMView:
         if type(norm_image) == dict:
             target = norm_image['target']
             pred = norm_image['pred']
-            norm_image = norm_image['image']
+            norm_image = norm_image['img']
         else:
             target = pred = ""
         norm_image_cuda = norm_image.clone().unsqueeze_(0).to(self.device)
