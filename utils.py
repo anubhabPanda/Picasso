@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import torch.optim as optim
-from torch.optim.lr_scheduler import StepLR
+from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
 from torchsummary import summary
 import torch.nn as nn
 import matplotlib.pyplot as plt
@@ -48,6 +48,11 @@ def sgd_optimizer(model, lr=0.01, momentum=0.9, l2_factor=0):
 
 def StepLR_scheduler(optimizer, step_size=6, gamma=0.1):
     return StepLR(optimizer, step_size=step_size, gamma=gamma)
+
+def LR_on_pleateau_scheduler(optimizer, patience=10, threshold=0.0001):
+    return ReduceLROnPlateau(optimizer, mode='min', factor=0.1, 
+                             patience=patience, threshold=threshold, threshold_mode='rel', 
+                             cooldown=0, min_lr=0, eps=1e-08, verbose=False)
 
 def plot_metrics(metric_list, plot_type="Loss"):
     fig, ax = plt.subplots(figsize = (6, 6))
@@ -155,6 +160,41 @@ def show_batch(dataloader, figsize=(15, 15), batch_num=None):
             axises[i].set_title(title)
     fig.tight_layout()
 
+
+def unnormalize(image, mean, std, out_type='array'):
+    """Un-normalize a given image.
+    
+    Args:
+        image: A 3-D ndarray or 3-D tensor.
+            If tensor, it should be in CPU.
+        mean: Mean value. It can be a single value or
+            a tuple with 3 values (one for each channel).
+        std: Standard deviation value. It can be a single value or
+            a tuple with 3 values (one for each channel).
+        out_type: Out type of the normalized image.
+            If `array` then ndarray is returned else if
+            `tensor` then torch tensor is returned.
+    """
+
+    if type(image) == torch.Tensor:
+        image = np.transpose(image.clone().numpy(), (1, 2, 0))
+    
+
+    normal_image = image * std + mean
+    if out_type == 'tensor':
+        return torch.Tensor(np.transpose(normal_image, (2, 0, 1)))
+    elif out_type == 'array':
+        return normal_image
+    return None  # No valid value given
+
+
+def to_numpy(tensor):
+    """Convert 3-D torch tensor to a 3-D numpy array.
+
+    Args:
+        tensor: Tensor to be converted.
+    """
+    return np.transpose(tensor.clone().numpy(), (1, 2, 0))
 
 
 
