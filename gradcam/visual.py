@@ -57,6 +57,7 @@ class GradCAMView:
         self.grad = self.gradcam.copy()
 
         self.views = []
+        self.class_idx = dict()
 
     def _gradcam(self):
         """ Initialize GradCAM instance. """
@@ -83,11 +84,17 @@ class GradCAMView:
 
         Args:
             norm_image: Normalized image. Should be of type
-                torch.Tensor
+                torch.Tensor or a dictionary containing image, target and prediction
         
         Returns:
-            Dictionary containing unnormalized image, heatmap and CAM result.
+            Dictionary containing unnormalized image, heatmap, CAM result, target and pred
         """
+        if type(norm_image) == dict:
+            target = norm_image['target']
+            pred = norm_image['pred']
+            norm_image = norm_image['image']
+        else:
+            target = pred = ""
         norm_image_cuda = norm_image.clone().unsqueeze_(0).to(self.device)
         heatmap, result = {}, {}
         for layer, gc in self.gradcam.items():
@@ -95,13 +102,15 @@ class GradCAMView:
             cam_heatmap, cam_result = visualize_cam(
                 mask,
                 unnormalize(norm_image, self.mean, self.std, out_type='tensor').clone().unsqueeze_(0).to(self.device),
-                alpha = 0.6
+                alpha = 0.3
             )
             heatmap[layer], result[layer] = to_numpy(cam_heatmap), to_numpy(cam_result)
         return {
             'image': unnormalize(norm_image, self.mean, self.std),
             'heatmap': heatmap,
-            'result': result
+            'result': result,
+            'target': target,
+            'pred': pred
         }
     
     def _plot_view(self, view, fig, row_num, ncols, metric):
@@ -146,17 +155,22 @@ class GradCAMView:
             n_images = len(self.views)
             n_cols = int(np.sqrt(n_images))
             n_rows = int(np.ceil(np.sqrt(n_images)))
+            idx_class = {v:k for k,v in list(self.class_idx.items())}
             # Initialize plot    
             fig, axes = plt.subplots(n_rows, n_cols, figsize = plot_size)
             axises = axes.flatten() if n_images > 1 else [axes]
             for i, ax in enumerate(axises):
                 ax.axis('off')
                 if i < n_images:
+                    target_id = self.views[i]['target']
+                    pred_id = self.views[i]['pred']
+                    title = f"Target: {idx_class[target_id]} \n  Pred : {idx_class[pred_id]}"
                     grad_cam_image = np.clip(self.views[i]['result'][layer], 0, 1)
-                    ax.imshow(grad_cam_image)   
+                    ax.imshow(grad_cam_image)
+                    ax.set_title(title)   
                 
             # Set spacing and display
-            plt.subplots_adjust(wspace=0, hspace=0)
+            plt.subplots_adjust(wspace=0, hspace=0.1)
             fig.suptitle(f"Gradcams for {layer.upper()}", fontsize = 15, y=1.05)
             fig.tight_layout()
             plt.show()
@@ -167,12 +181,16 @@ class GradCAMView:
             # Clear cache
             plt.clf()
     
-    def __call__(self, norm_image_list, plot_path, plot_size = (15, 15)):
+    def __call__(self, norm_image_list, class_idx, plot_path, plot_size = (15, 15)):
         """Get GradCAM for a list of images.
 
         Args:
-            norm_image_list: List of normalized images. Each image
-                should be of type torch.Tensor
+            norm_image_list: List of normalized images or dict. Each image/dict
+                should be of type torch.Tensor or a dictionary containing image, target and prediction
+            class_id: class id mapping
+            plot_path: path to plot the image
+            plot_size: Size of gradcam plot
         """
+        self.class_idx = class_idx
         self.cam(norm_image_list)
         self.plot(plot_path, plot_size)
