@@ -34,7 +34,7 @@ def visualize_cam(mask, img, alpha=1.0):
 
 class GradCAMView:
 
-    def __init__(self, model, layers, device, mean, std):
+    def __init__(self, model, layers, device, mean, std, heatmap_alpha=1.0):
         """Instantiate GradCAM and GradCAM++.
 
         Args:
@@ -43,12 +43,14 @@ class GradCAMView:
             device: GPU or CPU.
             mean: Mean of the dataset.
             std: Standard Deviation of the dataset.
+            heatmap_alpha: Opacity of the heatmap between 0 and 1
         """
         self.model = model
         self.layers = layers
         self.device = device
         self.mean = mean
         self.std = std
+        self.heatmap_alpha = heatmap_alpha
 
         self._gradcam()
         self._gradcam_pp()
@@ -102,7 +104,7 @@ class GradCAMView:
             cam_heatmap, cam_result = visualize_cam(
                 mask,
                 unnormalize(norm_image, self.mean, self.std, out_type='tensor').clone().unsqueeze_(0).to(self.device),
-                alpha = 0.3
+                alpha = self.heatmap_alpha
             )
             heatmap[layer], result[layer] = to_numpy(cam_heatmap), to_numpy(cam_result)
         return {
