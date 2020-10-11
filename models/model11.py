@@ -51,7 +51,7 @@ class Modified_Resnet(nn.Module):
         x = self.pool1(x)
         x = x.view(x.shape[0], -1)
         x = self.fc(x)
-        # x = F.log_softmax(x, dim=1) 
+        x = F.log_softmax(x, dim=1) 
         return x
 
 def call_model():
