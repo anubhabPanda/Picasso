@@ -46,13 +46,6 @@ def nll_loss():
 def sgd_optimizer(model, lr=0.01, momentum=0.9, l2_factor=0):
     return optim.SGD(model.parameters(), lr=lr, momentum=momentum, weight_decay=l2_factor)
 
-def StepLR_scheduler(optimizer, step_size=6, gamma=0.1):
-    return StepLR(optimizer, step_size=step_size, gamma=gamma)
-
-def LR_on_pleateau_scheduler(optimizer, patience=10, threshold=0.0001):
-    return ReduceLROnPlateau(optimizer, mode='min', factor=0.1, 
-                             patience=patience, threshold=threshold, threshold_mode='rel', 
-                             cooldown=0, min_lr=0, eps=1e-08, verbose=False)
 
 def plot_metrics(metric_list, plot_type="Loss"):
     fig, ax = plt.subplots(figsize = (6, 6))
@@ -159,6 +152,7 @@ def show_batch(dataloader, figsize=(15, 15), batch_num=None):
             axises[i].imshow(single_img, cmap=cmap)
             axises[i].set_title(title)
     fig.tight_layout()
+    plt.subplots_adjust(wspace=0.1, hspace=0.2)
 
 
 def unnormalize(image, mean, std, out_type='array'):

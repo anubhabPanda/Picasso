@@ -3,10 +3,8 @@ from torchvision.datasets import VisionDataset
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 import os
-import config
 import torch
-import utils
-from preprocessing import transformations
+from dataset.preprocessing import transformations
 from PIL import Image
 from pandas import Series
 class AlbumentationsDataset(Dataset):
@@ -71,8 +69,7 @@ def torch_datasets(train, download=True, transforms=None, augmentations=None, da
     -------
     data: torch Dataset
     """
-    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), dataset_name)
-
+    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, dataset_name)
     
     transforms = transformations(transforms, augmentations)
 

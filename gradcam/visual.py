@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from .gradcam import GradCAM
 from .gradcam_pp import GradCAMPP
-from utils import to_numpy, unnormalize
+from utilities.utils import to_numpy, unnormalize
 
 
 def visualize_cam(mask, img, alpha=1.0):
