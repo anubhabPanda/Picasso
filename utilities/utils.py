@@ -133,6 +133,9 @@ def show_batch(dataloader, figsize=(15, 15), batch_num=None):
         one_batch = next(iter(dataloader))
     
     batch_imgs, batch_labels = one_batch[0], one_batch[1]
+    if bs > 64:
+        batch_imgs = batch_imgs[:64]
+        batch_labels = batch_labels[:64]
     class_idx = dataloader.dataset.class_to_idx
     idx_class = idx_to_class(class_idx)
     n_cols = int(np.sqrt(len(batch_imgs)))
