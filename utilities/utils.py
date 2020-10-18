@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from torchvision import transforms
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, plot_confusion_matrix
+from textwrap import wrap
 
 def get_stats(dataset):
 
@@ -114,7 +115,7 @@ def show_imgs(dataset, n_imgs, plot_size = (15, 15), cmap = None):
         if i < n_imgs:
             title = f'Class : {idx_class[dataset.targets[i]]}'
             ax.imshow(dataset.data[i], cmap = cmap)
-            ax.set_title(title)
+            ax.set_title("\n".join(wrap(title, 20)))
     fig.tight_layout()
 
 
@@ -133,9 +134,9 @@ def show_batch(dataloader, figsize=(15, 15), batch_num=None):
         one_batch = next(iter(dataloader))
     
     batch_imgs, batch_labels = one_batch[0], one_batch[1]
-    if bs > 64:
-        batch_imgs = batch_imgs[:64]
-        batch_labels = batch_labels[:64]
+    if bs > 32:
+        batch_imgs = batch_imgs[:32]
+        batch_labels = batch_labels[:32]
     class_idx = dataloader.dataset.class_to_idx
     idx_class = idx_to_class(class_idx)
     n_cols = int(np.sqrt(len(batch_imgs)))
@@ -153,7 +154,7 @@ def show_batch(dataloader, figsize=(15, 15), batch_num=None):
             title = f'Class : {idx_class[batch_labels[i].item()]}'
             single_img = np.clip(batch_imgs[i].squeeze().permute(1, 2, 0).numpy(), 0, 1)
             axises[i].imshow(single_img, cmap=cmap)
-            axises[i].set_title(title)
+            axises[i].set_title("\n".join(wrap(title, 20)))
     fig.tight_layout()
     plt.subplots_adjust(wspace=0.1, hspace=0.2)
 

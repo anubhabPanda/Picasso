@@ -1,7 +1,11 @@
 cifar10/
 __pycache__/
 .vscode/
+.tiny-imagenet-200/
 .ipynb_checkpoints/
 *.ipynb
 *.png
 *.pth
+*.JPEG
+*.txt
+*.zip

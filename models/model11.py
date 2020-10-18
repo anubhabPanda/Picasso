@@ -41,7 +41,7 @@ class Modified_Resnet(nn.Module):
         self.layer2 = residual_block(128, 256)
         self.layer3 = residual_block(256, 512, basic_block=resnet_base(512, 512))
         self.pool1 = nn.MaxPool2d(4, 4)
-        self.fc = nn.Linear(512, 10)
+        self.fc = nn.Linear(512, 10, bias=False)
         
     def forward(self, x):
         x = self.prep(x)

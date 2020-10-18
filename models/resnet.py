@@ -98,30 +98,31 @@ class ResNet(nn.Module):
         out = self.layer2(out)
         out = self.layer3(out)
         out = self.layer4(out)
-        out = F.avg_pool2d(out, 4)
+        out = F.avg_pool2d(out, 8)
         out = out.view(out.size(0), -1)
+        print(out.shape)
         out = self.linear(out)
         return out
 
 
-def ResNet18():
-    return ResNet(BasicBlock, [2, 2, 2, 2])
+def ResNet18(num_classes):
+    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes)
 
 
-def ResNet34():
-    return ResNet(BasicBlock, [3, 4, 6, 3])
+def ResNet34(num_classes):
+    return ResNet(BasicBlock, [3, 4, 6, 3], num_classes)
 
 
-def ResNet50():
-    return ResNet(Bottleneck, [3, 4, 6, 3])
+def ResNet50(num_classes):
+    return ResNet(Bottleneck, [3, 4, 6, 3], num_classes)
 
 
-def ResNet101():
-    return ResNet(Bottleneck, [3, 4, 23, 3])
+def ResNet101(num_classes):
+    return ResNet(Bottleneck, [3, 4, 23, 3], num_classes)
 
 
-def ResNet152():
-    return ResNet(Bottleneck, [3, 8, 36, 3])
+def ResNet152(num_classes):
+    return ResNet(Bottleneck, [3, 8, 36, 3], num_classes)
 
 
 def test():

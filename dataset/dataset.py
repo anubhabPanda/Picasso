@@ -7,6 +7,8 @@ import torch
 from dataset.preprocessing import transformations
 from PIL import Image
 from pandas import Series
+from dataset.tinyimagenet import TinyImageNetDataset
+
 class AlbumentationsDataset(Dataset):
     """__init__ and __len__ functions are the same as in TorchvisionDataset"""
     def __init__(self, data, targets, transform, class_to_idx):
@@ -80,10 +82,16 @@ def torch_datasets(train, download=True, transforms=None, augmentations=None, da
             )
         elif dataset_name.lower() == 'mnist':
             data = datasets.MNIST(
-                data_path, train=train, download=download, transform=transforms
+                data_path, train=train, download=download, transform=None
             )
         # print(transforms)
         return AlbumentationsDataset(data.data, data.targets, transforms, data.class_to_idx)
     else:
         print("Enter a correct dataset name")
+
+
+def tinyimagenet_dataset(data_path, train=True, train_split=0.7, download=False, random_seed=1, transforms=None, augmentations=None):
+    transforms = transformations(transforms, augmentations)
+    data = TinyImageNetDataset(data_path, train=True, train_split=0.7, download=False, random_seed=1, transform=None)
+    return AlbumentationsDataset(data.data, data.targets, transforms, data.class_to_idx)
 
