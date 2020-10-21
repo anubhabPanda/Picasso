@@ -73,7 +73,7 @@ def plot_incorrect_images(img_list, class_idx, cmap=None, plot_size=(15, 15)):
             title = f"Target: {idx_class[target_id]} \n  Pred : {idx_class[pred_id]}"
             incorrect_image = np.clip(img_list[i]['img'].permute(1, 2, 0).cpu().numpy()*0.25 + 0.5,0, 1)
             ax.imshow(incorrect_image, cmap = cmap)
-            ax.set_title(title)
+            ax.set_title("\n".join(wrap(title, 20)))
     fig.tight_layout()
 
 def transformations(transformations = None, augmentations = None):
